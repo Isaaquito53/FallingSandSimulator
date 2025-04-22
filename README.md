@@ -1,8 +1,8 @@
 # FALLING SAND SIMULATOR (C++ SDL lib)
 #### This project is a little falling sand simulator made in C++ using SDL library.
 <br/>
-
 Here is a gif of **how does it looks like** :
+<br/>
 <img src="/images/FallingSand.gif" width="300">
 
 ---
