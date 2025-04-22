@@ -4,7 +4,6 @@
 
 Here is a gif of **how it looks like** :
 
-<br/>
 <img src="/images/FallingSand.gif" width="300">
 
 ---
