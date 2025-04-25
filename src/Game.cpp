@@ -12,8 +12,8 @@ void Game::GameInit() {
 	m_solidColor.push_back(200);
 	m_solidColor.push_back(200);
 	// set R,G,B of falling sand pixels
+	m_fallingColor.push_back(200);
 	m_fallingColor.push_back(160);
-	m_fallingColor.push_back(120);
 	m_fallingColor.push_back(20);
 
 	// clear the grid and set solid pixels as the initial drawing tool

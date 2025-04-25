@@ -9,5 +9,5 @@
 using namespace std;
 
 const int WINDOW_WIDTH = 600, WINDOW_HEIGHT = 600;
-const int GAME_SCALE = 24;
+const int GAME_SCALE = 20;
 const int GAME_SPEED = 200;
