@@ -9,8 +9,9 @@ Here is a gif of **how it looks like** :
 ---
 # In this version you can:
 - Draw solid and falling sand pixels on the grid.
-- Clear the grid (by clicking the **"Clear Grid"** button)
-- Change between solid and falling drawing (by clicking the **"Solid/Falling"** button)
+- Clear the grid (by clicking the **"Clear Grid"** button).
+- Change between solid and falling drawing (by clicking the **"Solid/Falling"** button).
+- **"Play/Pause"** the simulation.
 
 ---
 # How to run:
@@ -23,9 +24,11 @@ It is recommended to manage all the files with Visual Studio.
 
 ---
 # Controls:
-Use **mouse** to draw and **click** the buttons.
+- Use the **mouse** and hold the **left click to draw** .
+- Same controls to **click the bottons** .
 
 ---
 # What have I learned?:
 - I've learned how to make and manage a grid regardless of the screen size.
 - I've learned how to do simple physics.
+- I've learned how to make a button system.

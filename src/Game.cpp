@@ -8,26 +8,25 @@ void Game::GameInit() {
 	SDL_CreateWindowAndRenderer("FallingSandSim", WINDOW_WIDTH, WINDOW_HEIGHT, 0, &m_win, &m_rend);
 	m_run = true;
 	// set R,G,B of solid pixels
-	m_solidColor.push_back(200);
-	m_solidColor.push_back(200);
-	m_solidColor.push_back(200);
+	m_solidColor = { 200, 200, 200 };
 	// set R,G,B of falling sand pixels
-	m_fallingColor.push_back(200);
-	m_fallingColor.push_back(160);
-	m_fallingColor.push_back(20);
+	m_fallingColor = { 200, 160, 20 };
 
 	// clear the grid and set solid pixels as the initial drawing tool
 	m_grid.InitGrid();
 	m_clearGrid = 0;
 	m_solidOrFalling = 0;
+	m_playOrPause = 1;
 
 	m_mouseDown = false;
 
 	// create buttons
-	Button solidFallingButton(0, 0, 230, 20, "Solid/Falling");
+	Button solidFallingButton(0, 0, 230, 20, "Solid/Falling", {155, 155, 155});
 	m_buttons.push_back(solidFallingButton);
-	Button clearGrid(0, 25, 230, 20, "Clear Grid");
+	Button clearGrid(0, 25, 230, 20, "Clear Grid", { 100, 100, 100 });
 	m_buttons.push_back(clearGrid);
+	Button playPause(0, 50, 230, 20, "Play/Pause", { 100, 100, 100 });
+	m_buttons.push_back(playPause);
 }
 
 void Game::ManageEvents() {
@@ -40,14 +39,16 @@ void Game::ManageEvents() {
 		// manage pixel drawing
 		if (m_e.type == SDL_EVENT_MOUSE_BUTTON_DOWN) {
 			SDL_GetMouseState(&m_mouseX, &m_mouseY);
-			// buttons management
-			for (Button b : m_buttons) {
-				if (b.m_id == "ID_Solid/Falling")
-					b.Action(m_mouseX, m_mouseY, m_solidOrFalling);
-				if (b.m_id == "ID_Clear Grid")
-					b.Action(m_mouseX, m_mouseY, m_clearGrid);
-			}
 			m_mouseDown = true;
+			// buttons management
+			for (Button& b : m_buttons) {
+				if (b.m_id == "ID_Solid/Falling")
+					b.Action(m_mouseX, m_mouseY, m_solidOrFalling, m_mouseDown);
+				if (b.m_id == "ID_Clear Grid")
+					b.Action(m_mouseX, m_mouseY, m_clearGrid, m_mouseDown);
+				if (b.m_id == "ID_Play/Pause")
+					b.Action(m_mouseX, m_mouseY, m_playOrPause, m_mouseDown);
+			}
 		}
 		else if (m_e.type == SDL_EVENT_MOUSE_BUTTON_UP)
 			m_mouseDown = false;
@@ -85,7 +86,7 @@ void Game::RemoveAllPixels() {
 void Game::DrawButton() {
 	for (Button b : m_buttons) {
 		// draw a rectangle that show where you can click this button
-		SDL_SetRenderDrawColor(m_rend, 155, 155, 155, SDL_ALPHA_OPAQUE);
+		SDL_SetRenderDrawColor(m_rend, b.m_color[0], b.m_color[1], b.m_color[2], SDL_ALPHA_OPAQUE);
 		SDL_SetRenderScale(m_rend, 1, 1);
 		SDL_RenderFillRect(m_rend, &b.m_actionArea);
 		// display the text of the button
@@ -123,7 +124,7 @@ void Game::GameLoop() {
 		SDL_RenderPresent(m_rend);
 
 		// upgrade state of falling sand pixels
-		if (d >= GAME_SPEED) {
+		if (d >= GAME_SPEED && m_playOrPause) {
 			m_grid.FallingSand();
 			d = 0;
 		}
