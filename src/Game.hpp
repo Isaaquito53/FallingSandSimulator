@@ -19,11 +19,9 @@ public:
 	SDL_Renderer* m_rend;				// SDL renderer
 	SDL_Window* m_win;					// SDL window
 	SDL_Event m_e;						// SDL event
-	int m_clearGrid;					// if 1, clear the grid and put this variable back to 0
-	int m_solidOrFalling;				// draw solid pixel or falling pixel (0: solid, 1: falling sand)
-	int m_playOrPause;					// if 1, any simulation will be played (0 = pause)
 	vector<int> m_solidColor;			// R,G,B for solid pixels
 	vector<int> m_fallingColor;			// R,G,B for falling sand pixels
+	vector<int> m_waterColor;			// R,G,B for water pixels
 	SDL_FRect m_pixel;					// rectangle that will be drawn at DrawPixels() method
 	Grid m_grid;						// grid where everything is drawn
 	bool m_mouseDown;					// if true, draw pixels on the grid

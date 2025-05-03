@@ -14,19 +14,29 @@ void Game::GameInit() {
 
 	// clear the grid and set solid pixels as the initial drawing tool
 	m_grid.InitGrid();
-	m_clearGrid = 0;
-	m_solidOrFalling = 0;
-	m_playOrPause = 1;
 
 	m_mouseDown = false;
 
 	// create buttons
-	Button solidFallingButton(0, 0, 230, 20, "Solid/Falling", {155, 155, 155});
-	m_buttons.push_back(solidFallingButton);
-	Button clearGrid(0, 25, 230, 20, "Clear Grid", { 100, 100, 100 });
+	Button pixelButton(0, 0, 230, 20, "Draw pixels", { { 155, 155, 155 }, { 200, 160, 20 } , {0, 100, 200} }, 3);
+	m_buttons.push_back(pixelButton);
+	Button clearGrid(0, 25, 230, 20, "Clear Grid", { { 155, 155, 155 }, { 100, 100, 100 } }, 2);
 	m_buttons.push_back(clearGrid);
-	Button playPause(0, 50, 230, 20, "Play/Pause", { 100, 100, 100 });
+	Button playPause(0, 50, 230, 20, "Play/Pause", { { 155, 155, 155 }, { 100, 100, 100 } }, 2);
 	m_buttons.push_back(playPause);
+
+	// define pixel colors
+	m_solidColor = { pixelButton.m_colors[SOLID_PIXEL][0] + pixelButton.m_colors[SOLID_PIXEL][0] / 4,
+					pixelButton.m_colors[SOLID_PIXEL][1] + pixelButton.m_colors[SOLID_PIXEL][1] / 4,
+					pixelButton.m_colors[SOLID_PIXEL][2] + pixelButton.m_colors[SOLID_PIXEL][2] / 4 };
+
+	m_fallingColor = { pixelButton.m_colors[FALLING_SAND_PIXEL][0] + pixelButton.m_colors[FALLING_SAND_PIXEL][0] / 4,
+					pixelButton.m_colors[FALLING_SAND_PIXEL][1] + pixelButton.m_colors[FALLING_SAND_PIXEL][1] / 4,
+					pixelButton.m_colors[FALLING_SAND_PIXEL][2] + pixelButton.m_colors[FALLING_SAND_PIXEL][2] / 4 };
+
+	m_waterColor = { pixelButton.m_colors[WATER_PIXEL][0] + pixelButton.m_colors[WATER_PIXEL][0] / 4,
+					pixelButton.m_colors[WATER_PIXEL][1] + pixelButton.m_colors[WATER_PIXEL][1] / 4,
+					pixelButton.m_colors[WATER_PIXEL][2] + pixelButton.m_colors[WATER_PIXEL][2] / 4 };
 }
 
 void Game::ManageEvents() {
@@ -42,12 +52,12 @@ void Game::ManageEvents() {
 			m_mouseDown = true;
 			// buttons management
 			for (Button& b : m_buttons) {
-				if (b.m_id == "ID_Solid/Falling")
-					b.Action(m_mouseX, m_mouseY, m_solidOrFalling, m_mouseDown);
+				if (b.m_id == "ID_Draw pixels")
+					b.Action(m_mouseX, m_mouseY, m_mouseDown);
 				if (b.m_id == "ID_Clear Grid")
-					b.Action(m_mouseX, m_mouseY, m_clearGrid, m_mouseDown);
+					b.Action(m_mouseX, m_mouseY, m_mouseDown);
 				if (b.m_id == "ID_Play/Pause")
-					b.Action(m_mouseX, m_mouseY, m_playOrPause, m_mouseDown);
+					b.Action(m_mouseX, m_mouseY, m_mouseDown);
 			}
 		}
 		else if (m_e.type == SDL_EVENT_MOUSE_BUTTON_UP)
@@ -57,7 +67,7 @@ void Game::ManageEvents() {
 
 void Game::AddPixel(float px, float py) {
 	// convert screen pixels to grid pixels and add pixel to the grid
-	m_grid.AddPixel(px / GAME_SCALE, py / GAME_SCALE, m_solidOrFalling);
+	m_grid.AddPixel(px / GAME_SCALE, py / GAME_SCALE, m_buttons[DRAW].m_option);
 }
 
 void Game::DrawPixels() {
@@ -65,14 +75,16 @@ void Game::DrawPixels() {
 	SDL_SetRenderScale(m_rend, 1, 1);
 	for (int r = 0; r < m_grid.m_nRows; r++) {
 		for (int c = 0; c < m_grid.m_nCols; c++) {
-			if (m_grid.m_matrix[r][c] != 2) {
+			if (m_grid.m_matrix[r][c] != EMPTY_PIXEL) {
 				// convert grid pixels to screen pixels
 				m_pixel.x = r * GAME_SCALE;		m_pixel.y = c * GAME_SCALE;
 				m_pixel.w = GAME_SCALE;			m_pixel.h = GAME_SCALE;
-				if (m_grid.m_matrix[r][c] == 0)
+				if (m_grid.m_matrix[r][c] == SOLID_PIXEL)
 					SDL_SetRenderDrawColor(m_rend, m_solidColor[0], m_solidColor[1], m_solidColor[2], SDL_ALPHA_OPAQUE);
-				else
+				else if (m_grid.m_matrix[r][c] == FALLING_SAND_PIXEL)
 					SDL_SetRenderDrawColor(m_rend, m_fallingColor[0], m_fallingColor[1], m_fallingColor[2], SDL_ALPHA_OPAQUE);
+				else if (m_grid.m_matrix[r][c] == WATER_PIXEL)
+					SDL_SetRenderDrawColor(m_rend, m_waterColor[0], m_waterColor[1], m_waterColor[2], SDL_ALPHA_OPAQUE);
 				SDL_RenderFillRect(m_rend, &m_pixel);
  			}
 		}
@@ -86,7 +98,7 @@ void Game::RemoveAllPixels() {
 void Game::DrawButton() {
 	for (Button b : m_buttons) {
 		// draw a rectangle that show where you can click this button
-		SDL_SetRenderDrawColor(m_rend, b.m_color[0], b.m_color[1], b.m_color[2], SDL_ALPHA_OPAQUE);
+		SDL_SetRenderDrawColor(m_rend, b.m_colors[b.m_option][0], b.m_colors[b.m_option][1], b.m_colors[b.m_option][2], SDL_ALPHA_OPAQUE);
 		SDL_SetRenderScale(m_rend, 1, 1);
 		SDL_RenderFillRect(m_rend, &b.m_actionArea);
 		// display the text of the button
@@ -104,9 +116,9 @@ void Game::GameLoop() {
 		// manage events
 		ManageEvents();
 		// clear grid
-		if (m_clearGrid) {
+		if (m_buttons[CLEAR].m_option) {
 			RemoveAllPixels();
-			m_clearGrid = 0;
+			m_buttons[CLEAR].m_option = 0;
 		}
 		// manage drawing on the grid
 		if (m_mouseDown) {
@@ -124,8 +136,9 @@ void Game::GameLoop() {
 		SDL_RenderPresent(m_rend);
 
 		// upgrade state of falling sand pixels
-		if (d >= GAME_SPEED && m_playOrPause) {
+		if (d >= GAME_SPEED && m_buttons[PAUSE].m_option) {
 			m_grid.FallingSand();
+			m_grid.Water();
 			d = 0;
 		}
 
