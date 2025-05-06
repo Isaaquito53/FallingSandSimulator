@@ -20,10 +20,14 @@ void Game::GameInit() {
 	// create buttons
 	Button pixelButton(0, 0, 230, 20, "Draw pixels", { { 155, 155, 155 }, { 200, 160, 20 } , {0, 100, 200} }, 3);
 	m_buttons.push_back(pixelButton);
-	Button clearGrid(0, 25, 230, 20, "Clear Grid", { { 155, 155, 155 }, { 100, 100, 100 } }, 2);
+	Button erase(0, 25, 230, 20, "Erase pixels", { { 155, 155, 155 }, { 100, 100, 100 } }, 2);
+	m_buttons.push_back(erase);
+	Button clearGrid(0, 50, 230, 20, "Clear Grid", { { 155, 155, 155 }, { 100, 100, 100 } }, 2);
 	m_buttons.push_back(clearGrid);
-	Button playPause(0, 50, 230, 20, "Play/Pause", { { 155, 155, 155 }, { 100, 100, 100 } }, 2);
+	Button playPause(0, 75, 230, 20, "Play/Pause", { { 100, 100, 100 }, { 155, 155, 155 } }, 2);
 	m_buttons.push_back(playPause);
+	Button shader(0, 100, 230, 20, "ShaderON/OFF", { { 155, 155, 155 }, { 100, 100, 100 } }, 2);
+	m_buttons.push_back(shader);
 
 	// define pixel colors
 	m_solidColor = { pixelButton.m_colors[SOLID_PIXEL][0] + pixelButton.m_colors[SOLID_PIXEL][0] / 4,
@@ -52,12 +56,7 @@ void Game::ManageEvents() {
 			m_mouseDown = true;
 			// buttons management
 			for (Button& b : m_buttons) {
-				if (b.m_id == "ID_Draw pixels")
-					b.Action(m_mouseX, m_mouseY, m_mouseDown);
-				if (b.m_id == "ID_Clear Grid")
-					b.Action(m_mouseX, m_mouseY, m_mouseDown);
-				if (b.m_id == "ID_Play/Pause")
-					b.Action(m_mouseX, m_mouseY, m_mouseDown);
+				b.Action(m_mouseX, m_mouseY, m_mouseDown);
 			}
 		}
 		else if (m_e.type == SDL_EVENT_MOUSE_BUTTON_UP)
@@ -67,26 +66,48 @@ void Game::ManageEvents() {
 
 void Game::AddPixel(float px, float py) {
 	// convert screen pixels to grid pixels and add pixel to the grid
-	m_grid.AddPixel(px / GAME_SCALE, py / GAME_SCALE, m_buttons[DRAW].m_option);
+	if (m_buttons[ERASE].m_option)
+		m_grid.AddPixel(px / GAME_SCALE, py / GAME_SCALE, EMPTY_PIXEL);
+	else
+		m_grid.AddPixel(px / GAME_SCALE, py / GAME_SCALE, m_buttons[DRAW].m_option);
 }
 
 void Game::DrawPixels() {
 	// draw all the pixels of the grid (only solid/falling sand pixels)
-	SDL_SetRenderScale(m_rend, 1, 1);
-	for (int r = 0; r < m_grid.m_nRows; r++) {
-		for (int c = 0; c < m_grid.m_nCols; c++) {
-			if (m_grid.m_matrix[r][c] != EMPTY_PIXEL) {
-				// convert grid pixels to screen pixels
-				m_pixel.x = r * GAME_SCALE;		m_pixel.y = c * GAME_SCALE;
-				m_pixel.w = GAME_SCALE;			m_pixel.h = GAME_SCALE;
-				if (m_grid.m_matrix[r][c] == SOLID_PIXEL)
-					SDL_SetRenderDrawColor(m_rend, m_solidColor[0], m_solidColor[1], m_solidColor[2], SDL_ALPHA_OPAQUE);
-				else if (m_grid.m_matrix[r][c] == FALLING_SAND_PIXEL)
-					SDL_SetRenderDrawColor(m_rend, m_fallingColor[0], m_fallingColor[1], m_fallingColor[2], SDL_ALPHA_OPAQUE);
-				else if (m_grid.m_matrix[r][c] == WATER_PIXEL)
-					SDL_SetRenderDrawColor(m_rend, m_waterColor[0], m_waterColor[1], m_waterColor[2], SDL_ALPHA_OPAQUE);
-				SDL_RenderFillRect(m_rend, &m_pixel);
- 			}
+	if (!m_buttons[SHADER].m_option) {
+		SDL_SetRenderScale(m_rend, 1, 1);
+		for (int r = 0; r < m_grid.m_nRows; r++) {
+			for (int c = 0; c < m_grid.m_nCols; c++) {
+				if (m_grid.m_matrix[r][c] != EMPTY_PIXEL) {
+					if (m_grid.m_matrix[r][c] == SOLID_PIXEL)
+						SDL_SetRenderDrawColor(m_rend, m_solidColor[0], m_solidColor[1], m_solidColor[2], SDL_ALPHA_OPAQUE);
+					else if (m_grid.m_matrix[r][c] == FALLING_SAND_PIXEL)
+						SDL_SetRenderDrawColor(m_rend, m_fallingColor[0], m_fallingColor[1], m_fallingColor[2], SDL_ALPHA_OPAQUE);
+					else if (m_grid.m_matrix[r][c] == WATER_PIXEL)
+						SDL_SetRenderDrawColor(m_rend, m_waterColor[0], m_waterColor[1], m_waterColor[2], SDL_ALPHA_OPAQUE);
+					// convert grid pixels to screen pixels
+					m_pixel.x = r * GAME_SCALE;		m_pixel.y = c * GAME_SCALE;
+					m_pixel.w = GAME_SCALE;			m_pixel.h = GAME_SCALE;
+					SDL_RenderFillRect(m_rend, &m_pixel);
+				}
+			}
+		}
+	}
+	else {
+		SDL_SetRenderScale(m_rend, 4.5, 4.5);
+		for (int r = 0; r < m_grid.m_nRows; r++) {
+			for (int c = 0; c < m_grid.m_nCols; c++) {
+				if (m_grid.m_matrix[r][c] != EMPTY_PIXEL) {
+					if (m_grid.m_matrix[r][c] == SOLID_PIXEL)
+						SDL_SetRenderDrawColor(m_rend, m_solidColor[0], m_solidColor[1], m_solidColor[2], SDL_ALPHA_OPAQUE);
+					else if (m_grid.m_matrix[r][c] == FALLING_SAND_PIXEL)
+						SDL_SetRenderDrawColor(m_rend, m_fallingColor[0], m_fallingColor[1], m_fallingColor[2], SDL_ALPHA_OPAQUE);
+					else if (m_grid.m_matrix[r][c] == WATER_PIXEL)
+						SDL_SetRenderDrawColor(m_rend, m_waterColor[0], m_waterColor[1], m_waterColor[2], SDL_ALPHA_OPAQUE);
+					// convert grid pixels to screen pixels
+					SDL_RenderPoint(m_rend, r * 4.5, c * 4.5);
+				}
+			}
 		}
 	}
 }

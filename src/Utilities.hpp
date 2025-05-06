@@ -20,5 +20,7 @@ const int WATER_PIXEL = 2;
 
 // button types
 const int DRAW = 0;
-const int CLEAR = 1;
-const int PAUSE = 2;
+const int ERASE = 1;
+const int CLEAR = 2;
+const int PAUSE = 3;
+const int SHADER = 4;

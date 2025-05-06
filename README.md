@@ -7,16 +7,23 @@ Here is a gif of how it looks like in the **version V0-1** :
 <img src="/images/FallingSand.gif" width="300">
 <br/>
 
-Here is a gif of  how it looks like in the **version V0-3** :
+Here is a gif of how it looks like in the **version V0-3** :
 
 <img src="/images/FallingSand_v0-3.gif" width="300">
+<br/>
+
+Here is a gif of how it looks like in the **version V0-4** :
+
+<img src="/images/FallingSand_v0-4.gif" width="300">
 
 ---
 # In this version you can:
-- Draw solid and falling sand pixels on the grid.
-- Clear the grid (by clicking the **"Clear Grid"** button).
+- Draw **solid/falling sand/water pixels** on the grid.
 - Change between different types of pixel drawing (by clicking the **"Draw pixels"** button).
+- Erase pixels (by clicking the **"Erase Grid"** button).
+- Clear the grid (by clicking the **"Clear Grid"** button).
 - **"Play/Pause"** the simulation.
+- Turn on/off the **shader**.
 
 ---
 # How to run:
@@ -48,7 +55,12 @@ It is recommended to manage all the files with Visual Studio.
 - I've added a colors vector to the Button class.
 - I've change the options "solid/falling", "clear" and "play/pause" to be part of the Button class.
 
+## V0-4:
+- I've finished the water simulation.
+- I've added a new button with a new feature named shader that converts the pixels (squares) into points.
+- I've added a new button to erase pixels.
+
+---
 # TO DO:
-- Finish water simulation.
 - Add new type of pixel (heavy pixel).
-- Add new Button (Erase).
+- Add a little button to activate/deactivate the other buttons.

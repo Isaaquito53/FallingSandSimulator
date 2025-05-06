@@ -11,6 +11,7 @@ Button::Button(float x, float y, float w, float h, string text, vector<vector<in
 	m_option = 0;			m_maxStates = maxStates;
 }
 
+// calculate if we clicked inside of a button area
 void Button::Action(float mouseX, float mouseY, bool& mouseDown) {
 	if (m_actionArea.x <= mouseX && m_actionArea.x + m_actionArea.w >= mouseX) {
 		if (m_actionArea.y <= mouseY && m_actionArea.y + m_actionArea.h >= mouseY) {

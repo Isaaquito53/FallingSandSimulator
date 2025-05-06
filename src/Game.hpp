@@ -10,7 +10,7 @@ public:
 	void GameInit();					// init the game
 	void GameLoop();					// main game loop
 	void ManageEvents();				// manage all keyboard/mouse events
-	void AddPixel(float px, float py);		// add a pixel in the grid by a position in the screen
+	void AddPixel(float px, float py);	// add a pixel in the grid by a position in the screen
 	void DrawButton();					// draw a button depending on its ID
 	void DrawPixels();					// draw all pixels in the grid
 	void RemoveAllPixels();				// remove all pixels in the grid
